@@ -43,6 +43,19 @@ dependencies {
 
     implementation("androidx.work:work-runtime-ktx:2.8.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+
+
+    implementation(libs.androidx.room.runtime.v250)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.material3.android)
+    implementation(libs.identity.android.legacy)
+
+    implementation(libs.logging.interceptor)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    annotationProcessor(libs.androidx.room.compiler)
+    implementation(libs.retrofit)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
