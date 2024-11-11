@@ -1,11 +1,17 @@
 package com.kim.gunwoo.tacotaco.server.remote
 
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.kim.gunwoo.tacotaco.server.local.TacotacoDB
 import com.kim.gunwoo.tacotaco.server.local.TokenDAO
 import com.kim.gunwoo.tacotaco.server.remote.interceptor.RefreshInterceptor
+import com.kim.gunwoo.tacotaco.server.remote.request.location.LocationRequest
+import com.kim.gunwoo.tacotaco.server.remote.server.LocationService
 import com.kim.gunwoo.tacotaco.server.remote.server.LoginService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -23,6 +29,7 @@ class RetrofitBuilder {
         private var retrofit: Retrofit? = null
         private var tokenDao: TokenDAO? = null
         private var loginService: LoginService? = null
+        private var locationService: LocationService? = null
 
         @Synchronized
         fun getGson(): Gson? {
@@ -128,11 +135,24 @@ class RetrofitBuilder {
             return okhttpBuilder.build()
         }
 
+        fun sendLocationToServer(latitude: Double, longitude: Double) {
+            CoroutineScope(Dispatchers.IO).launch{
+                RetrofitBuilder.getLocationService().postLocation(LocationRequest(latitude = "$latitude", longitude="$longitude"))
+            }
+        }
+
         fun getLoginService(): LoginService {
             if (loginService == null) {
                 loginService = getRetrofit().create(LoginService::class.java)
             }
             return loginService!!
+        }
+
+        fun getLocationService(): LocationService {
+            if (locationService == null) {
+                locationService = getRetrofit().create(LocationService::class.java)
+            }
+            return locationService!!
         }
 
     }

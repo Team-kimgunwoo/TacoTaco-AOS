@@ -7,6 +7,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.kim.gunwoo.tacotaco.server.remote.RetrofitBuilder.Companion.sendLocationToServer
 
 class LocationWorker(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
@@ -23,6 +24,7 @@ class LocationWorker(context: Context, workerParams: WorkerParameters) : Worker(
                 if (latitude != null && longitude != null) {
                     // 위치 정보를 사용할 수 있음 (예: 로그 출력, 데이터베이스 저장, 서버 전송)
                     Toast.makeText(applicationContext, "위치: $latitude, $longitude", Toast.LENGTH_SHORT).show()
+                    sendLocationToServer(latitude, longitude)
                 } else {
                     Toast.makeText(applicationContext, "위치 정보를 가져올 수 없습니다", Toast.LENGTH_SHORT).show()
                 }
