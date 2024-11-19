@@ -9,9 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kim.gunwoo.tacotaco.R
 import com.kim.gunwoo.tacotaco.databinding.ActivityLoginBinding
 import com.kim.gunwoo.tacotaco.databinding.ActivityMainBinding
+import com.kim.gunwoo.tacotaco.emotion.EmotionActivity
 import com.kim.gunwoo.tacotaco.server.local.TacotacoDB
 import com.kim.gunwoo.tacotaco.server.local.TokenEntity
 import com.kim.gunwoo.tacotaco.server.remote.RetrofitBuilder
@@ -24,20 +27,34 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val TAG = "LoginActivity"
+    private var token = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (binding.email.length() == 0 || binding.pw.length() == 0) {
 
-        } else {
-            login(
-                emailText = binding.email.text.toString(),
-                passwordText = binding.pw.text.toString()
-            )
+        binding.button.setOnClickListener {
+            if (binding.email.length() == 0 || binding.pw.length() == 0) {
+                Log.d(TAG, "onCreate: 안됨")
+            } else {
+                login(
+                    emailText = binding.email.text.toString(),
+                    passwordText = binding.pw.text.toString()
+                )
+            }
         }
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if(!task.isSuccessful){
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            token = task.result
+            Log.d("Login FCM", "onCreate: ${token}")
+        })
 
     }
 
@@ -49,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO){
             kotlin.runCatching {
                 RetrofitBuilder.getLoginService()
-                    .postLogin(LoginRequest(email = emailText, pw = passwordText))
+                    .postLogin(LoginRequest(email = emailText, pw = passwordText, fcmToken = token))
             }.onSuccess { result->
                 accessToken = result.data?.accessToken ?: ""
                 refreshToken = result.data?.refreshToken ?: ""
@@ -61,6 +78,8 @@ class LoginActivity : AppCompatActivity() {
                     )
 //                    moveScreen()
                     Log.d(TAG, "login: 성공")
+                    val intent = Intent(this@LoginActivity, EmotionActivity::class.java)
+                    startActivity(intent)
                 }
             }.onFailure { 
                 it.printStackTrace()

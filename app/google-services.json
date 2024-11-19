@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "400552227169",
+    "project_id": "tacotaco-8678c",
+    "storage_bucket": "tacotaco-8678c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400552227169:android:c9a1ed8c90daa544561520",
+        "android_client_info": {
+          "package_name": "com.kim.gunwoo.tacotaco"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV-HVus0mdLBVYMIcyhzAwTr_XsFjn5cg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
